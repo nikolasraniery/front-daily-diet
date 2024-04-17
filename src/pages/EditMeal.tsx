@@ -6,11 +6,11 @@ import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { GreenArrow } from "../components/GreenArrow";
-import { createMeal } from "../services/mealsService";
+import { getOneMeal, updateMeal } from "../services/mealsService";
 
 export function EditMeal() {
   const [toggleButton, setToggleButton] = useState(true);
@@ -22,6 +22,8 @@ export function EditMeal() {
   });
 
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   ///////////////////////////////////////////////////////////
 
@@ -46,7 +48,7 @@ export function EditMeal() {
     setMeal((prevMeal) => ({ ...prevMeal, in_diet: !toggleButton }));
   };
 
-  function registerMeal(event: React.FormEvent) {
+  function updateSelectedMeal(event: React.FormEvent) {
     event.preventDefault();
     if (
       meal.name &&
@@ -54,15 +56,27 @@ export function EditMeal() {
       meal.in_diet !== undefined &&
       meal.time
     ) {
-      createMeal(meal);
+      updateMeal(meal);
       navigate("/dashboard");
-      toast.success("Refeição cadastrada com sucesso!");
+      toast.success("Refeição atualizada com sucesso!");
     } else {
-      toast.error("Erro ao cadastrar refeição, tente novamente!");
+      toast.error("Erro ao atualizar refeição, tente novamente!");
     }
   }
 
-  console.log(meal);
+  console.log("Refeição", location.state.id);
+
+  useEffect(() => {
+    const mealSelected = async () => {
+      try {
+        const data = await getOneMeal(location.state.id);
+        setMeal(data.data.meal);
+      } catch (error) {
+        console.error("Erro ao buscar dados");
+      }
+    };
+    mealSelected();
+  }, [location]);
 
   return (
     <div className="h-screen w-full overflow-y-auto">
@@ -82,7 +96,7 @@ export function EditMeal() {
       <div className="h-screen w-full overflow-auto flex flex-col justify-between absolute mt-24">
         <Form.Root
           className="w-full h-screen overflow-auto z-10 flex flex-col p-6 bg-white rounded-3xl"
-          onSubmit={registerMeal}
+          onSubmit={updateSelectedMeal}
         >
           <Form.Field className="grid" name="name">
             <div className="flex items-center justify-between">
@@ -106,6 +120,7 @@ export function EditMeal() {
               <input
                 autoComplete="none"
                 className=" bg-white border border-gray-5 rounded-lg"
+                value={meal.name}
                 onChange={(e) =>
                   setMeal((prevMeal) => ({ ...prevMeal, name: e.target.value }))
                 }
@@ -126,6 +141,7 @@ export function EditMeal() {
             </div>
             <Form.Control asChild>
               <textarea
+                value={meal.description}
                 className=" bg-white border border-gray-5 rounded-lg h-32"
                 onChange={(e) =>
                   setMeal((prevMeal) => ({
@@ -149,6 +165,7 @@ export function EditMeal() {
               </div>
               <Form.Control asChild>
                 <DateField
+                  value={dayjs(meal.time)}
                   onChange={(event) => handleFormatDate(event)}
                   label="Selecione a data"
                   format="DD/MM/YYYY"
@@ -206,7 +223,7 @@ export function EditMeal() {
               className="bg-gray-2 text-white rounded-lg mt-4 p-2 active:bg-gray-1"
               type="submit"
             >
-              Cadastrar refeição
+              Salvar refeição
             </button>
           </Form.Submit>
         </Form.Root>

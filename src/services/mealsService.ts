@@ -32,6 +32,38 @@ export const createMeal = async ({
   }
 };
 
+export const updateMeal = async ({
+  id,
+  name,
+  description,
+  in_diet,
+  time,
+}: Meal) => {
+  try {
+    const token = getToken();
+    const updateMealResponse = await API.patch(
+      `/meals/${id}`,
+      {
+        id,
+        name,
+        description,
+        in_diet,
+        time,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    );
+
+    return updateMealResponse;
+  } catch (error) {
+    console.error("Erro ao atualizar refeição", error);
+    throw error;
+  }
+};
+
 export const getAllMeals = async () => {
   try {
     const token = getToken();

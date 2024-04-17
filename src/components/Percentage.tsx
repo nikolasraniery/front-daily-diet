@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { GetAllMealsParams, getAllMeals } from "../services/mealsService";
+import { Meal } from "../interfaces/MealsInterface";
+import { getAllMeals } from "../services/mealsService";
 import { GreenArrow } from "./GreenArrow";
 
 export function Percentage() {
   const [mealsPercentage, setMealsToPercentage] = useState<{
-    meals: GetAllMealsParams[];
+    meals: Meal[];
     total: number;
   } | null>(null);
   const [percentages, setPercentages] = useState({
@@ -62,8 +63,6 @@ export function Percentage() {
   }
 
   const percentageArrowColor = changeArrowColor();
-
-  console.log(inDietPercentage);
 
   useEffect(() => {
     const fetchMealsData = async () => {

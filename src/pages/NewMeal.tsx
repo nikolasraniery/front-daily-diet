@@ -62,8 +62,6 @@ export function NewMeal() {
     }
   }
 
-  console.log(meal);
-
   return (
     <div className="h-screen w-full overflow-y-auto">
       <div className="bg-gray-5 pb-6 h-[200px] w-full fixed">
