@@ -14,8 +14,6 @@ export function Register() {
 
   const navigate = useNavigate();
 
-  console.log("dados do usuário:", { userData });
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
