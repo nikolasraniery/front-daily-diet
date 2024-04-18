@@ -7,10 +7,6 @@ import { Register } from "../pages/Register";
 
 export const routes = createBrowserRouter([
   {
-    path: "*",
-    element: <Login />,
-  },
-  {
     path: "/login",
     element: <Login />,
   },
